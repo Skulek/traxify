@@ -1,5 +1,12 @@
-import { Box, Flex, LinkBox, LinkOverlay, Text } from "@chakra-ui/layout";
-import { Button, Input } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Flex,
+  LinkBox,
+  LinkOverlay,
+  Text,
+} from "@chakra-ui/layout";
+import { Button, FormControl, Input } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -16,19 +23,31 @@ const AuthForm = ({ mode }: AppProps) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    await auth(mode, { email, password, firstName, lastName });
+    if (errorMessage) {
+      setErrorMessage("");
+    }
+    const res = await auth(mode, { email, password, firstName, lastName });
+    if (typeof res === "boolean") {
+      router.push("/");
+    } else {
+      setErrorMessage(res.message);
+    }
     setIsLoading(false);
-    router.push("/");
   };
+
+  const disabledSignIn = !email || !password;
+  const disabledSignUp = disabledSignIn || !firstName || !lastName;
 
   return (
     <Box width="100vw" height="100vh" bg="black" color="white">
       <Flex
+        direction="column"
         justify="center"
         align="center"
         height="100px"
@@ -48,58 +67,76 @@ const AuthForm = ({ mode }: AppProps) => {
           borderRadius="6px"
         >
           <form onSubmit={(e) => handleSubmit(e)}>
-            <Input
-              marginBottom="10px"
-              placeholder="Email"
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {mode === "signup" ? (
-              <>
-                <Input
-                  marginBottom="10px"
-                  placeholder="First Name"
-                  type="text"
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-                <Input
-                  marginBottom="10px"
-                  placeholder="Last Name"
-                  type="text"
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </>
-            ) : null}
+            <Flex gap="15px" direction="column">
+              <Input
+                placeholder="Email"
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {mode === "signup" ? (
+                <>
+                  <FormControl>
+                    <Input
+                      placeholder="First Name"
+                      type="text"
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormControl isRequired>
+                    <Input
+                      placeholder="Last Name"
+                      type="text"
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </FormControl>
+                </>
+              ) : null}
 
-            <Input
-              marginBottom="10px"
-              placeholder="Password"
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Flex gap="15px" direction="column" justify="center" align="center">
-              <Button
-                type="submit"
-                bg="green.500"
-                isLoading={isLoading}
-                _hover={{
-                  background: "green.300",
-                }}
+              <FormControl isRequired>
+                <Input
+                  placeholder="Password"
+                  type="password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </FormControl>
+
+              <Flex
+                gap="100px"
+                direction="column"
+                justify="center"
+                align="center"
               >
-                {mode === "signin" ? "Sign In" : "Sign Up"}
-              </Button>
+                <Button
+                  type="submit"
+                  isDisabled={
+                    mode === "signin" ? disabledSignIn : disabledSignUp
+                  }
+                  bg="green.500"
+                  isLoading={isLoading}
+                  _hover={{
+                    background: "green.300",
+                  }}
+                >
+                  {mode === "signin" ? "Sign In" : "Sign Up"}
+                </Button>
+              </Flex>
             </Flex>
           </form>
         </Box>
+        {errorMessage ? (
+          <Center color="red.400">{errorMessage}</Center>
+        ) : (
+          <Box visibility="hidden">Error</Box>
+        )}
         {mode === "signin" && (
-          <Text>
-            Dont have account ?{" "}
+          <Box>
+            <Text display="inline">Dont have account ? </Text>
             <LinkBox display="inline">
               <Link href="/signup" passHref>
                 <LinkOverlay display="inline">Sign up !</LinkOverlay>
               </Link>
             </LinkBox>
-          </Text>
+          </Box>
         )}
       </Flex>
     </Box>

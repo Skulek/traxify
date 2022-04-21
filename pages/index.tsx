@@ -3,7 +3,7 @@ import { Image } from "@chakra-ui/react";
 import { Artist } from "@prisma/client";
 import MainLayout from "../components/mainLayout";
 import { useUser } from "../lib/hooks";
-import prisma from "../lib/prisma";
+import { prisma } from "../lib/prisma";
 
 interface HomeProps {
   artists: Artist[];

@@ -1,5 +1,6 @@
-import { Box, Divider, List } from "@chakra-ui/layout";
+import { Box, Divider, Link, LinkBox, List } from "@chakra-ui/layout";
 import Image from "next/image";
+import NextLink from "next/link";
 import {
   MdFavorite,
   MdHome,
@@ -52,7 +53,13 @@ const Sidebar = () => {
     >
       <Box paddingY="20px" height="100%">
         <Box width="120px" marginBottom="20px" paddingX="20px">
-          <Image src="/logo.svg" width={120} height={60} />
+          <LinkBox>
+            <NextLink href="/" passHref>
+              <Link href="/">
+                <Image src="/logo.svg" width={120} height={60} />
+              </Link>
+            </NextLink>
+          </LinkBox>
         </Box>
         <Box marginBottom="20px">
           <List spacing={2}>

@@ -1,5 +1,3 @@
-export type CustomError = {
+export interface CustomError {
   message: string;
-  status: number;
-  additionalMessage: string;
-};
+}

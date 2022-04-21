@@ -13,63 +13,66 @@ import {
 } from "@chakra-ui/react";
 import { HiOutlineClock } from "react-icons/hi";
 import { BsFillPlayFill } from "react-icons/bs";
-import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import { GetServerSidePropsContext } from "next";
+import InferNextPropsType from "infer-next-props-type";
 import formatDuration from "format-duration";
 import { Song } from "@prisma/client";
 import MainLayout from "../../components/mainLayout";
-import prisma from "../../lib/prisma";
+import { prisma } from "../../lib/prisma";
 import { FormatDateToDayAgo } from "../../lib/formatters";
 import { useStoreActions } from "../../lib/hooks";
+import { getUserIdFromJwt } from "../../lib/auth";
 
-export async function getStaticProps({
+export async function getServerSideProps({
   params,
-}: GetStaticPropsContext<{ id: string }>) {
+  req,
+}: GetServerSidePropsContext<{ id: string }>) {
   if (!params?.id) {
     return {
       props: {},
       notFound: true,
     };
   }
-
+  const token = req.cookies[process.env.APP_SECRET];
+  const userId = getUserIdFromJwt(token);
   const playlist = await prisma.playlist.findUnique({
     where: { id: +params.id },
     include: {
       songs: {
         include: {
-          artist: {},
-          album: {},
+          artist: {
+            select: {
+              name: true,
+            },
+          },
+          album: {
+            select: {
+              name: true,
+            },
+          },
         },
       },
     },
   });
+  if (playlist?.userId !== userId) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {
       playlist,
     },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every 10 seconds
-    revalidate: 240, // In seconds
   };
-}
-
-export async function getStaticPaths() {
-  const playlists = await prisma.playlist.findMany();
-  // Get the paths we want to pre-render based on posts
-  const paths = playlists.map((playlist) => ({
-    params: { id: playlist.id.toString() },
-  }));
-
-  // We'll pre-render only these paths at build time.
-  // { fallback: blocking } will server-render pages
-  // on-demand if the path doesn't exist.
-  return { paths, fallback: "blocking" };
 }
 
 const Playlist = ({
   playlist,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+}: InferNextPropsType<typeof getServerSideProps>) => {
   const setActiveSongs = useStoreActions(
     (actions) => actions.changeActiveSongs
   );

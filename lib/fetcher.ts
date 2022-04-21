@@ -1,5 +1,3 @@
-import { CustomError } from "./error";
-
 export default async function fetcher<T>(
   url: string,
   data: {} | null
@@ -12,13 +10,5 @@ export default async function fetcher<T>(
       "Content-Type": "application/json",
     },
   });
-  if (!res.ok) {
-    const error: CustomError = {
-      message: "An error occurred while fetching the data.",
-      additionalMessage: await res.json(),
-      status: res.status,
-    };
-    throw error;
-  }
   return res.json();
 }

@@ -2,24 +2,34 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../lib/prisma";
+import { User } from "@prisma/client";
+import { prisma } from "../../lib/prisma";
+import { CustomError } from "../../lib/error";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (
+  req: NextApiRequest,
+  res: NextApiResponse<boolean | CustomError>
+) => {
   const { email, password } = req.body;
-  let user;
+  let user: User | null;
   try {
     user = await prisma.user.findUnique({
       where: { email },
     });
+    if (!user) {
+      res.status(400);
+      res.json({ message: "User not found" });
+      return;
+    }
   } catch (e) {
-    res.status(401);
-    res.json({ error: "User not exists - please sign in first" });
+    res.status(400);
+    res.json({ message: "something went wrong - try again" });
     return;
   }
 
   if (!bcrypt.compareSync(password, user.password)) {
     res.status(400);
-    res.json({ error: "Invalid Password" });
+    res.json({ message: "Invalid Password - try again" });
     return;
   }
 
@@ -36,7 +46,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   );
   res.setHeader(
     "Set-Cookie",
-    cookie.serialize("ACESS_TOKEN", token, {
+    cookie.serialize(process.env.APP_SECRET, token, {
       httpOnly: true,
       maxAge: 8 * 60 * 60,
       path: "/",
@@ -44,5 +54,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       secure: process.env.NODE_ENV === "production",
     })
   );
-  res.json(user);
+  res.json(!user);
 };

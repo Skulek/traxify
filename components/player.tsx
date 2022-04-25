@@ -32,7 +32,9 @@ interface PlayerProps {
 const Player = ({ activeSong, songs }: PlayerProps) => {
   const [playing, setPlaying] = useState(true);
   const [index, setIndex] = useState(
-    songs.findIndex((s) => s.id === activeSong?.id)
+    songs.findIndex((s) => {
+      return s.id === activeSong?.id;
+    })
   );
   const [seek, setSeek] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
@@ -41,6 +43,8 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
   const [duration, setDuration] = useState(0.0);
   const soundRef = useRef<ReactHowler>(null);
   const repeatRef = useRef<boolean>(repeat);
+  const shuffleRef = useRef<boolean>(repeat);
+
   const setActiveSong = useStoreActions((state) => state.changeActiveSong);
   const volume = useStoreState((store) => store.volume);
   const handleKeyUp = useCallback(
@@ -71,7 +75,7 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
   }, [playing, isSeeking]);
 
   useEffect(() => {
-    if (songs.length) {
+    if (songs.length && index > -1) {
       setActiveSong(songs[index]);
     }
   }, [index, setActiveSong, songs]);
@@ -79,6 +83,10 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
   useEffect(() => {
     repeatRef.current = repeat;
   }, [repeat]);
+
+  useEffect(() => {
+    shuffleRef.current = shuffle;
+  }, [shuffle]);
 
   useEffect(() => {
     window.addEventListener("keyup", handleKeyUp);
@@ -105,7 +113,7 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
 
   const nextSong = () => {
     setIndex((state) => {
-      if (shuffle) {
+      if (shuffleRef) {
         let next = Math.floor(Math.random() * songs.length);
         while (next === state) {
           next = Math.floor(Math.random() * songs.length);
@@ -164,11 +172,14 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
             variant="link"
             color="gray.600"
             aria-label="previous"
-            onClick={() => prevSong()}
+            onClick={prevSong}
             icon={<MdSkipPrevious />}
           />
           {!playing ? (
             <IconButton
+              _focus={{
+                boxShadow: "none",
+              }}
               outline="none"
               variant="link"
               aria-label="play"
@@ -179,6 +190,9 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
             />
           ) : (
             <IconButton
+              _focus={{
+                boxShadow: "none",
+              }}
               outline="none"
               variant="link"
               aria-label="pause"
@@ -194,7 +208,7 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
             variant="link"
             color="gray.600"
             aria-label="next"
-            onClick={() => nextSong()}
+            onClick={nextSong}
             icon={<MdSkipNext />}
           />
           <IconButton

@@ -2,12 +2,12 @@ import { Song } from "@prisma/client";
 import { createStore, action, Action } from "easy-peasy";
 
 export interface TraxStore {
-  activeSongs: Song[] | null;
+  activeSongs: Song[];
   activeSong: Song | null;
   volume: number;
   changeVolume: Action<TraxStore, number>;
   changeActiveSongs: Action<TraxStore, Song[]>;
-  changeActiveSong: Action<TraxStore, Song>;
+  changeActiveSong: Action<TraxStore, Song | null>;
 }
 
 export const store = createStore<TraxStore>({

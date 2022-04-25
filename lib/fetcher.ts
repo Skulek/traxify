@@ -1,6 +1,6 @@
 export default async function fetcher<T>(
   url: string,
-  data: {} | null
+  data: object | null
 ): Promise<T> {
   const res = await fetch(`${window.location.origin}/api/${url}`, {
     method: data ? "POST" : "GET",

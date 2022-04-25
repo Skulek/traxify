@@ -41,12 +41,6 @@ export const artistsData: {
     albums: [
       {
         artistId: 2,
-        createdAt: new Date(
-          +new Date() - Math.floor(Math.random() * 10000000000)
-        ),
-        updatedAt: new Date(
-          +new Date() - Math.floor(Math.random() * 10000000000)
-        ),
         id: 2,
         name: "Truth",
       },

@@ -1,27 +1,14 @@
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import {
-  TableContainer,
-  Table,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
-  Image,
-  IconButton,
-  Tooltip,
-} from "@chakra-ui/react";
-import { HiOutlineClock } from "react-icons/hi";
+import { Box } from "@chakra-ui/layout";
+import { IconButton } from "@chakra-ui/react";
 import { BsFillPlayFill } from "react-icons/bs";
 import { GetServerSidePropsContext } from "next";
 import InferNextPropsType from "infer-next-props-type";
-import formatDuration from "format-duration";
 import { Song } from "@prisma/client";
 import MainLayout from "../../components/mainLayout";
 import { prisma } from "../../lib/prisma";
-import { FormatDateToDayAgo } from "../../lib/formatters";
 import { useStoreActions } from "../../lib/hooks";
 import { getUserIdFromJwt } from "../../lib/auth";
+import SongsTable from "../../components/songsTable";
 
 export async function getServerSideProps({
   params,
@@ -79,8 +66,8 @@ const Playlist = ({
   const setActiveSong = useStoreActions((actions) => actions.changeActiveSong);
 
   const handlePlay = (activeSong?: Song) => {
-    setActiveSong(activeSong || playlist?.songs[0]!);
-    if (playlist?.songs) {
+    setActiveSong(activeSong || playlist?.songs[0] || null);
+    if (playlist?.songs.length) {
       setActiveSongs(playlist.songs);
     }
   };
@@ -108,68 +95,7 @@ const Playlist = ({
             onClick={() => handlePlay()}
           />
         </Box>
-        <TableContainer>
-          <Table variant="unstyled">
-            <Thead
-              color="whiteAlpha.900"
-              borderBottom="1px solid"
-              borderColor="rgba(255, 255,255,0.2)"
-              fontWeight="bold"
-            >
-              <Tr>
-                <Th>#</Th>
-                <Th>Name</Th>
-                <Th>Album</Th>
-                <Th>Date Added</Th>
-                <Th isNumeric>
-                  <HiOutlineClock />
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody color="whiteAlpha.800">
-              {playlist.songs.map((song, index) => (
-                <Tr
-                  sx={{
-                    transition: "all .3s ",
-                    "&:hover": {
-                      bg: "rgba(255,255,255, 0.1)",
-                    },
-                  }}
-                  key={song.id}
-                  cursor="pointer"
-                  onClick={() => handlePlay(song)}
-                >
-                  <Td>{index + 1}</Td>
-                  <Td>
-                    <Flex gap="5px">
-                      <Image
-                        alignSelf="center"
-                        boxSize="30px"
-                        objectFit="cover"
-                        src="https://picsum.photos/200"
-                        alt="hello"
-                      />
-                      <Box>
-                        <Text fontWeight="bold">{song.name}</Text>
-                        <Text>{song.artist.name}</Text>
-                      </Box>
-                    </Flex>
-                  </Td>
-                  <Td>{song.album?.name}</Td>
-                  <Td>
-                    <Tooltip
-                      label={song.updatedAt.toDateString()}
-                      aria-label="A tooltip"
-                    >
-                      {FormatDateToDayAgo(song.updatedAt)}
-                    </Tooltip>
-                  </Td>
-                  <Td isNumeric>{formatDuration(song.duration * 1000)}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
+        <SongsTable songs={playlist.songs} handlePlay={handlePlay} />
       </Box>
     </MainLayout>
   );

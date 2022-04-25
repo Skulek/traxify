@@ -18,7 +18,7 @@ const theme = extendTheme({
     Button: {
       variants: {
         link: {
-          "focus:": {
+          ":focus": {
             outline: "none",
             boxShadow: "none",
           },
@@ -28,7 +28,7 @@ const theme = extendTheme({
   },
 });
 
-type Page<P = {}> = NextPage<P> & {
+type Page<P = object> = NextPage<P> & {
   excludeLayout?: string;
 };
 

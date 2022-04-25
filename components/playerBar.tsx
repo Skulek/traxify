@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/layout";
+import { Box, Center, Flex, Square, Text } from "@chakra-ui/layout";
 import { useStoreState } from "../lib/hooks";
 import Player from "./player";
 import VolumeControl from "./volumeControl";
@@ -9,21 +9,20 @@ const PlayerBar = () => {
   const volume = useStoreState((state) => state.volume);
   return (
     <Box height="100px" width="100%" bg="gray.900" padding="10px">
-      <Flex align="center" height="100%">
-        <Box bgColor="blue" color="white" width="30%">
+      <Flex height="100%" gap="xs" flexGrow={[1, 3, 1]}>
+        <Flex justify="center" align="center" color="white" width="20%">
           {activeSong ? (
-            <>
+            <Box paddingX="20px">
               <Text fontSize="large">{activeSong?.name}</Text>
-              <Text fontSize="sm">{activeSong?.id}</Text>
-            </>
+            </Box>
           ) : null}
-        </Box>
-        <Box bg="green" flexGrow={[1, 2]}>
+        </Flex>
+        <Box flexGrow={[1, 2]}>
           <Player songs={songs ?? []} activeSong={activeSong} />
         </Box>
-        <Box bg="yellow" width="20%">
+        <Flex justify="center" align="center" width="20%">
           <VolumeControl volume={volume} />
-        </Box>
+        </Flex>
       </Flex>
     </Box>
   );

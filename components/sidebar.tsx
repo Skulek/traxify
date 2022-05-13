@@ -1,6 +1,25 @@
-import { Box, Divider, Link, LinkBox, List } from "@chakra-ui/layout";
+import {
+  Box,
+  Center,
+  Divider,
+  Flex,
+  Link,
+  LinkBox,
+  List,
+} from "@chakra-ui/layout";
+import {
+  IconButton,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+  Spinner,
+  useDisclosure,
+} from "@chakra-ui/react";
 import Image from "next/image";
 import NextLink from "next/link";
+import { useState } from "react";
 import {
   MdFavorite,
   MdHome,
@@ -8,19 +27,16 @@ import {
   MdPlaylistAdd,
   MdSearch,
 } from "react-icons/md";
+import { useSearch } from "../lib/hooks";
 import MenuListItem from "./menuListItem";
 import PlayList from "./playList";
+import SearchResultsList from "./searchResultsList";
 
 const navMenu = [
   {
     name: "Home",
     icon: MdHome,
     route: "/",
-  },
-  {
-    name: "Search",
-    icon: MdSearch,
-    route: "/search",
   },
   {
     name: "Your Library",
@@ -43,6 +59,14 @@ const navMusicMenu = [
 ];
 
 const Sidebar = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [searchValue, setSearchValue] = useState("");
+  const { results, isLoading } = useSearch(searchValue);
+
+  const handleClose = () => {
+    setSearchValue("");
+    onClose();
+  };
   return (
     <Box
       width="100%"
@@ -52,7 +76,7 @@ const Sidebar = () => {
       color="gray"
     >
       <Box paddingY="20px" height="100%">
-        <Box width="120px" marginBottom="20px" paddingX="20px">
+        <Flex marginBottom="20px" paddingX="20px" justify="space-between">
           <LinkBox>
             <NextLink href="/" passHref>
               <Link href="/">
@@ -60,7 +84,44 @@ const Sidebar = () => {
               </Link>
             </NextLink>
           </LinkBox>
-        </Box>
+          <Center>
+            <IconButton
+              variant="outline"
+              aria-label="search"
+              border="none"
+              onClick={onOpen}
+              icon={<MdSearch size={30} />}
+            />
+            <Modal isOpen={isOpen} onClose={handleClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalBody bg="gray.700">
+                  <Input
+                    type="text"
+                    aria-autocomplete="list"
+                    borderColor="whiteAlpha.200"
+                    _focus={{
+                      borderColor: "whiteAlpha.900",
+                    }}
+                    color="whiteAlpha.800"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck="false"
+                    maxLength={64}
+                    onChange={(e) => {
+                      setSearchValue(e.target.value);
+                    }}
+                  />
+                  {isLoading && searchValue ? (
+                    <Spinner size="xl" />
+                  ) : (
+                    <SearchResultsList {...results} />
+                  )}
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+          </Center>
+        </Flex>
         <Box marginBottom="20px">
           <List spacing={2}>
             {navMenu.map((menuItem) => (

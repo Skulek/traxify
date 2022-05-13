@@ -10,7 +10,7 @@ import { Button, FormControl, Input } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { auth } from "../lib/mutations";
 
 type AppProps = {
@@ -40,6 +40,12 @@ const AuthForm = ({ mode }: AppProps) => {
     }
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    if (mode === "signin") router.prefetch("/");
+    else router.prefetch("signin");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const disabledSignIn = !email || !password;
   const disabledSignUp = disabledSignIn || !firstName || !lastName;

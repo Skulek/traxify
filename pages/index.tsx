@@ -24,6 +24,7 @@ const Home = ({ artists }: HomeProps) => {
         color: "red",
       }}
       description={`Your number of playlists ${playlistCount}`}
+      userName={`${user?.firstName} ${user?.lastName}`}
       loading={!isLoading}
     >
       <Box color="white" paddingX="40px">

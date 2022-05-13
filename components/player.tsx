@@ -113,7 +113,7 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
 
   const nextSong = () => {
     setIndex((state) => {
-      if (shuffleRef) {
+      if (shuffleRef.current) {
         let next = Math.floor(Math.random() * songs.length);
         while (next === state) {
           next = Math.floor(Math.random() * songs.length);
@@ -125,7 +125,7 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
   };
 
   const onEnd = () => {
-    if (repeatRef) {
+    if (repeatRef.current) {
       setSeek(0);
       soundRef.current?.seek(0);
     } else {

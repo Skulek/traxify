@@ -1,7 +1,19 @@
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import { Button, IconButton, Image, Skeleton } from "@chakra-ui/react";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { Box, Flex, Link, Text } from "@chakra-ui/layout";
+import {
+  Button,
+  IconButton,
+  Image,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Skeleton,
+} from "@chakra-ui/react";
 import { ReactNode } from "react";
 import { MdArrowDropDown, MdArrowLeft, MdArrowRight } from "react-icons/md";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 
 type LayoutType = "Profile" | "Playlist";
 interface LinearGradientOptions {
@@ -19,6 +31,7 @@ interface MainLayoutProps {
   gradient: LinearGradientOptions;
   children: ReactNode;
   description: string;
+  userName: string;
   loading: boolean;
 }
 const MainLayout = ({
@@ -28,8 +41,10 @@ const MainLayout = ({
   gradient,
   description,
   children,
+  userName,
   loading,
 }: MainLayoutProps) => {
+  const router = useRouter();
   return (
     <Box
       height="100%"
@@ -46,6 +61,9 @@ const MainLayout = ({
               size="sm"
               bgColor="black"
               color="white"
+              onClick={() => {
+                router.back();
+              }}
             />
             <IconButton
               aria-label="Next"
@@ -56,15 +74,29 @@ const MainLayout = ({
               color="white"
             />
           </Flex>
-          <Button
-            size="sm"
-            color="white"
-            rounded="full"
-            bgColor="black"
-            rightIcon={<MdArrowDropDown />}
-          >
-            UserName
-          </Button>
+          <Menu>
+            <MenuButton
+              as={Button}
+              colorScheme="gray"
+              rightIcon={<MdArrowDropDown />}
+            >
+              <Skeleton isLoaded={loading}>
+                <Text>{userName}</Text>
+              </Skeleton>
+            </MenuButton>
+            <MenuList>
+              <MenuItem>
+                <NextLink href="/" passHref>
+                  <Link>Profile</Link>
+                </NextLink>
+              </MenuItem>
+              <MenuItem>
+                <NextLink href="/api/logout" passHref>
+                  <Link>logout</Link>
+                </NextLink>
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </Flex>
         <Flex gap="15px" padding="20px">
           <Image

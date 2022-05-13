@@ -39,6 +39,12 @@ export async function getServerSideProps({
           },
         },
       },
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
     },
   });
   if (playlist?.userId !== userId) {
@@ -83,6 +89,7 @@ const Playlist = ({
         color: "red",
         direction: "to-b",
       }}
+      userName={`${playlist.user?.firstName} ${playlist.user?.lastName}`}
       loading
     >
       <Box bg="transparent" width="100%">

@@ -7,7 +7,7 @@ type JWTPayload = JwtPayload & {
   id: string;
 };
 
-export type NextApiResponseWithUser = NextApiResponse & {
+export type NextApiResponseWithUser<T = any> = NextApiResponse<T> & {
   user?: User;
 };
 

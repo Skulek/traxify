@@ -32,27 +32,36 @@ const theme = extendTheme({
       },
     },
   },
+  fonts: {
+    head: `'Lato', sans-serif`,
+    body: `'Lato', sans-serif`,
+  },
 });
 
 type Page<P = object> = NextPage<P> & {
   excludeLayout?: string;
 };
 
-type Props = AppProps & {
+type MyProps = AppProps & {
   Component: Page;
 };
 
-const MyApp = ({ Component, pageProps }: Props) => {
+type Props = StoreProvider["props"] & { children: React.ReactNode };
+
+const StoreProviderCasted =
+  StoreProvider as unknown as React.ComponentType<Props>;
+
+const MyApp = ({ Component, pageProps }: MyProps) => {
   return (
     <ChakraProvider theme={theme}>
       {Component.excludeLayout ? (
         <Component {...pageProps} />
       ) : (
-        <StoreProvider store={store}>
+        <StoreProviderCasted store={store}>
           <PlayerLayout>
             <Component {...pageProps} />
           </PlayerLayout>
-        </StoreProvider>
+        </StoreProviderCasted>
       )}
     </ChakraProvider>
   );

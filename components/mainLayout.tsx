@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Box, Flex, Link, Text } from "@chakra-ui/layout";
+import { Box, Flex, Link, LinkOverlay, Text } from "@chakra-ui/layout";
 import {
   Button,
   IconButton,
@@ -13,9 +13,8 @@ import {
 import { ReactNode } from "react";
 import { MdArrowDropDown, MdArrowLeft, MdArrowRight } from "react-icons/md";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 
-type LayoutType = "Profile" | "Playlist";
+type LayoutType = "Profile" | "Playlist" | "CreatePlayList";
 interface LinearGradientOptions {
   color: string;
   direction: "to-t" | "to-b";
@@ -26,8 +25,8 @@ interface ImageOptions {
 }
 interface MainLayoutProps {
   type: LayoutType;
-  image: ImageOptions;
-  header: string;
+  image: React.ReactNode;
+  header: React.ReactNode;
   gradient: LinearGradientOptions;
   children: ReactNode;
   description: string;
@@ -44,7 +43,6 @@ const MainLayout = ({
   userName,
   loading,
 }: MainLayoutProps) => {
-  const router = useRouter();
   return (
     <Box
       height="100%"
@@ -52,28 +50,7 @@ const MainLayout = ({
       bgGradient={`linear(${gradient.direction}, ${gradient.color}.500 0%, ${gradient.color}.600 15%, ${gradient.color}.700 40%, rgba(0,0,0,0.95) 75%)`}
     >
       <Flex direction="column" bg={`${gradient.color}.600`}>
-        <Flex paddingY="20px" paddingX="20px" justifyContent="space-between">
-          <Flex gap="10px">
-            <IconButton
-              aria-label="Previous"
-              icon={<MdArrowLeft />}
-              rounded="full"
-              size="sm"
-              bgColor="black"
-              color="white"
-              onClick={() => {
-                router.back();
-              }}
-            />
-            <IconButton
-              aria-label="Next"
-              icon={<MdArrowRight />}
-              rounded="full"
-              size="sm"
-              bgColor="black"
-              color="white"
-            />
-          </Flex>
+        <Flex direction="row-reverse" paddingY="20px" paddingX="20px">
           <Menu>
             <MenuButton
               as={Button}
@@ -86,26 +63,20 @@ const MainLayout = ({
             </MenuButton>
             <MenuList>
               <MenuItem>
-                <NextLink href="/" passHref>
-                  <Link>Profile</Link>
+                <NextLink href="/profile" passHref>
+                  <Link textDecoration="none">Profile</Link>
                 </NextLink>
               </MenuItem>
               <MenuItem>
                 <NextLink href="/api/logout" passHref>
-                  <Link>logout</Link>
+                  <Link>Logout</Link>
                 </NextLink>
               </MenuItem>
             </MenuList>
           </Menu>
         </Flex>
         <Flex gap="15px" padding="20px">
-          <Image
-            boxSize="150px"
-            src={image.src}
-            alt={image.alt}
-            rounded={type === "Profile" ? "full" : "none"}
-            boxShadow="2xl"
-          />
+          {image}
           <Flex
             direction="column"
             flexDirection="column"
@@ -117,9 +88,13 @@ const MainLayout = ({
               {type}
             </Text>
             <Skeleton isLoaded={loading}>
-              <Text fontSize="5xl" fontWeight="extrabold" color="gray.100">
-                {header}
-              </Text>
+              {typeof header === "string" ? (
+                <Text fontSize="5xl" fontWeight="extrabold" color="gray.100">
+                  {header}
+                </Text>
+              ) : (
+                header
+              )}
             </Skeleton>
             <Text fontSize="xs" fontWeight="200">
               {description}

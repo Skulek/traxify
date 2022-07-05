@@ -49,7 +49,7 @@ const navMusicMenu = [
   {
     name: "Create Playlist",
     icon: MdPlaylistAdd,
-    route: "/",
+    route: "/playlist/create",
   },
   {
     name: "Favorites",

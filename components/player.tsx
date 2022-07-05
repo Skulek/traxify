@@ -48,7 +48,7 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
   const setActiveSong = useStoreActions((state) => state.changeActiveSong);
   const volume = useStoreState((store) => store.volume);
   const handleKeyUp = useCallback(
-    (ev) => {
+    (ev: KeyboardEvent) => {
       if (ev.code === "Space") {
         setPlaying((prevState) => !prevState);
         ev.preventDefault();
@@ -89,7 +89,7 @@ const Player = ({ activeSong, songs }: PlayerProps) => {
   }, [shuffle]);
 
   useEffect(() => {
-    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("keyup", handleKeyUp, true);
     return () => window.removeEventListener("keyup", handleKeyUp);
   }, [handleKeyUp]);
 

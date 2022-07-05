@@ -10,7 +10,7 @@ import { Button, FormControl, Input } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { auth } from "../lib/mutations";
 
 type AppProps = {
@@ -39,6 +39,14 @@ const AuthForm = ({ mode }: AppProps) => {
       setErrorMessage(res.message);
     }
     setIsLoading(false);
+  };
+
+  const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
   };
 
   useEffect(() => {
@@ -74,11 +82,16 @@ const AuthForm = ({ mode }: AppProps) => {
         >
           <form onSubmit={(e) => handleSubmit(e)}>
             <Flex gap="15px" direction="column">
-              <Input
-                placeholder="Email"
-                type="email"
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <FormControl isRequired>
+                <Input
+                  value={email}
+                  placeholder="Email"
+                  type="email"
+                  onChange={handleEmailChange}
+                  required
+                />
+              </FormControl>
+
               {mode === "signup" ? (
                 <>
                   <FormControl>
@@ -100,9 +113,10 @@ const AuthForm = ({ mode }: AppProps) => {
 
               <FormControl isRequired>
                 <Input
+                  value={password}
                   placeholder="Password"
                   type="password"
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handlePasswordChange}
                 />
               </FormControl>
 
@@ -136,12 +150,30 @@ const AuthForm = ({ mode }: AppProps) => {
         )}
         {mode === "signin" && (
           <Box>
-            <Text display="inline">Dont have account ? </Text>
-            <LinkBox display="inline">
-              <Link href="/signup" passHref>
-                <LinkOverlay display="inline">Sign up !</LinkOverlay>
-              </Link>
-            </LinkBox>
+            <Flex gap="5px" paddingBottom="10px">
+              <Text>Dont have account ?</Text>
+              <LinkBox>
+                <Link href="/signup" passHref>
+                  <LinkOverlay>Sign up !</LinkOverlay>
+                </Link>
+              </LinkBox>
+            </Flex>
+            <Flex justify="center">
+              <Button
+                bgColor="transparent"
+                display="block"
+                size="xs"
+                onClick={() => {
+                  setEmail("user@test.com");
+                  setPassword("password");
+                }}
+                _hover={{
+                  background: "red.300",
+                }}
+              >
+                Use test account
+              </Button>
+            </Flex>
           </Box>
         )}
       </Flex>

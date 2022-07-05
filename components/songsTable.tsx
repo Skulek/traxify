@@ -15,7 +15,11 @@ import { Text } from "@chakra-ui/layout";
 import formatDuration from "format-duration";
 import { Song } from "@prisma/client";
 import { HiOutlineClock } from "react-icons/hi";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { FormatDateToDayAgo } from "../lib/formatters";
+import { SongId } from "../lib/types";
+
+type SongsTableType = "readonly" | "create-playlist";
 
 interface SongsTableProps {
   songs: (Song & {
@@ -26,10 +30,30 @@ interface SongsTableProps {
       name: string;
     } | null;
   })[];
+  type: SongsTableType;
   handlePlay: (activeSong: Song) => void;
+  playlistSongs?: SongId[];
+  handleAddSongToPlaylist?: (song: Song) => void;
+  handleRemoveSongFromPlaylist?: (song: Song) => void;
 }
 
-const SongsTable = ({ songs, handlePlay }: SongsTableProps) => {
+const handleIconClick = (
+  e: React.MouseEvent<SVGAElement, MouseEvent>,
+  song: Song,
+  func?: (s: Song) => void
+) => {
+  e.stopPropagation();
+  if (func) func(song);
+};
+
+const SongsTable = ({
+  type = "readonly",
+  songs,
+  playlistSongs,
+  handlePlay,
+  handleAddSongToPlaylist,
+  handleRemoveSongFromPlaylist,
+}: SongsTableProps) => {
   return (
     <TableContainer>
       <Table variant="unstyled">
@@ -40,7 +64,7 @@ const SongsTable = ({ songs, handlePlay }: SongsTableProps) => {
           fontWeight="bold"
         >
           <Tr>
-            <Th>#</Th>
+            <Th width={15}>#</Th>
             <Th>Name</Th>
             <Th>Album</Th>
             <Th>Date Added</Th>
@@ -64,18 +88,55 @@ const SongsTable = ({ songs, handlePlay }: SongsTableProps) => {
             >
               <Td verticalAlign="middle">{index + 1}</Td>
               <Td>
-                <Flex gap="5px" align="center">
-                  <Image
-                    alignSelf="center"
-                    boxSize="30px"
-                    objectFit="cover"
-                    src="https://picsum.photos/200"
-                    alt="hello"
-                  />
-                  <Box>
-                    <Text fontWeight="bold">{song.name}</Text>
-                    <Text>{song.artist.name}</Text>
-                  </Box>
+                <Flex align="center" justify="space-between">
+                  <Flex gap="10px">
+                    <Image
+                      alignSelf="center"
+                      boxSize="40px"
+                      objectFit="cover"
+                      src="https://picsum.photos/200"
+                      alt="hello"
+                    />
+                    <Box>
+                      <Text fontWeight="bold">{song.name}</Text>
+                      <Text>{song.artist.name}</Text>
+                    </Box>
+                  </Flex>
+                  {type === "create-playlist" ? (
+                    <Box>
+                      {playlistSongs?.some((s) => s.id === song.id) ? (
+                        <DeleteIcon
+                          cursor="pointer"
+                          w={6}
+                          h={6}
+                          onClick={(
+                            event: React.MouseEvent<SVGAElement, MouseEvent>
+                          ) =>
+                            handleIconClick(
+                              event,
+                              song,
+                              handleRemoveSongFromPlaylist
+                            )
+                          }
+                        />
+                      ) : (
+                        <AddIcon
+                          cursor="pointer"
+                          onClick={(
+                            event: React.MouseEvent<SVGAElement, MouseEvent>
+                          ) =>
+                            handleIconClick(
+                              event,
+                              song,
+                              handleAddSongToPlaylist
+                            )
+                          }
+                          w={6}
+                          h={6}
+                        />
+                      )}
+                    </Box>
+                  ) : null}
                 </Flex>
               </Td>
               <Td verticalAlign="middle">{song.album?.name}</Td>
@@ -96,6 +157,12 @@ const SongsTable = ({ songs, handlePlay }: SongsTableProps) => {
       </Table>
     </TableContainer>
   );
+};
+
+SongsTable.defaultProps = {
+  handleAddSongToPlaylist: () => undefined,
+  handleRemoveSongFromPlaylist: () => undefined,
+  playlistSongs: [],
 };
 
 export default SongsTable;

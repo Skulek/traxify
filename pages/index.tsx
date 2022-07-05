@@ -13,10 +13,15 @@ const Home = ({ artists }: HomeProps) => {
   const { user, playlistCount, isLoading } = useUser();
   return (
     <MainLayout
-      image={{
-        src: "https://bit.ly/dan-abramov",
-        alt: "Dan-Abramov",
-      }}
+      image={
+        <Image
+          boxSize="150px"
+          src="https://i.pravatar.cc/150"
+          alt="fake-avatar"
+          rounded="full"
+          boxShadow="2xl"
+        />
+      }
       type="Profile"
       header={`${user?.firstName} ${user?.lastName}`}
       gradient={{
@@ -35,20 +40,20 @@ const Home = ({ artists }: HomeProps) => {
           <Text>only visible to You</Text>
         </Box>
         <Flex justify="space-evenly">
-          {artists.map((artist) => (
-            <Box bg="red.800" borderRadius="4px" key={artist.id}>
+          {artists.map((artist, index) => (
+            <Box bg="transparent" borderRadius="4px" key={artist.id}>
               <Image
                 boxShadow="2xl"
                 rounded="full"
-                src="gibbresh.png"
+                src={`https://i.pravatar.cc/150?img=${index}`}
                 fallbackSrc="https://via.placeholder.com/150"
               />
-              <Box marginTop="5px">
+              <Flex direction="column" align="center" marginTop="10px">
                 <Text fontSize="l" fontWeight="bold">
                   {artist.name}
                 </Text>
                 <Text fontSize="xs">Artist</Text>
-              </Box>
+              </Flex>
             </Box>
           ))}
         </Flex>

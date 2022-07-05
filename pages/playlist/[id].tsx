@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/layout";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, Image } from "@chakra-ui/react";
 import { BsFillPlayFill } from "react-icons/bs";
 import { GetServerSidePropsContext } from "next";
 import InferNextPropsType from "infer-next-props-type";
@@ -82,7 +82,15 @@ const Playlist = ({
   return (
     <MainLayout
       type="Playlist"
-      image={{ alt: playlist.name, src: "https://picsum.photos/200" }}
+      image={
+        <Image
+          boxSize="150px"
+          src="https://picsum.photos/200"
+          alt={playlist.name}
+          rounded="none"
+          boxShadow="2xl"
+        />
+      }
       description={`Playlist with ${playlist.songs.length} songs`}
       header={playlist.name}
       gradient={{
@@ -102,7 +110,11 @@ const Playlist = ({
             onClick={() => handlePlay()}
           />
         </Box>
-        <SongsTable songs={playlist.songs} handlePlay={handlePlay} />
+        <SongsTable
+          type="readonly"
+          songs={playlist.songs}
+          handlePlay={handlePlay}
+        />
       </Box>
     </MainLayout>
   );

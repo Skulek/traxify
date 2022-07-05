@@ -4,7 +4,7 @@ import { prisma } from "../../lib/prisma";
 
 const data = async (req: NextApiRequest, res: NextApiResponseWithUser) => {
   if (!res.user) {
-    res.json("no user found");
+    res.json({ message: "no user found" });
     res.status(400);
     return;
   }

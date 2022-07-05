@@ -7,13 +7,16 @@ type JWTPayload = JwtPayload & {
   id: string;
 };
 
-export type NextApiResponseWithUser<T = any> = NextApiResponse<T> & {
+export type NextApiResponseWithUser<T = object> = NextApiResponse<T> & {
   user?: User;
 };
 
-export const getUserIdFromJwt = (token: string) => {
+export const getUserIdFromJwt = (token: string | undefined) => {
   try {
-    const { id } = jwt.verify(token, process.env.APP_SECRET) as JWTPayload;
+    const { id } = jwt.verify(
+      token ?? "",
+      process.env.APP_SECRET
+    ) as JWTPayload;
     return +id;
   } catch {
     return 0;
@@ -28,7 +31,6 @@ export const validateRoute = (handler: NextApiHandler) => {
       where: { id },
     });
     res.user = user ?? undefined;
-
     return handler(req, res);
   };
 };

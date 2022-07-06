@@ -17,19 +17,16 @@ export default async (
       where: { email },
     });
     if (!user) {
-      res.status(400);
-      res.json({ message: "User not found" });
+      res.status(400).json({ message: "User not found" });
       return;
     }
   } catch (e) {
-    res.status(400);
-    res.json({ message: "something went wrong - try again" });
+    res.status(500).json({ message: "something went wrong - try again" });
     return;
   }
 
   if (!bcrypt.compareSync(password, user.password)) {
-    res.status(400);
-    res.json({ message: "Invalid Password - try again" });
+    res.status(400).json({ message: "Invalid Password - try again" });
     return;
   }
 

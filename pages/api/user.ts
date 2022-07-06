@@ -4,8 +4,7 @@ import { prisma } from "../../lib/prisma";
 
 const data = async (req: NextApiRequest, res: NextApiResponseWithUser) => {
   if (!res.user) {
-    res.json({ message: "no user found" });
-    res.status(400);
+    res.status(400).json({ message: "no user found" });
     return;
   }
 
@@ -14,7 +13,7 @@ const data = async (req: NextApiRequest, res: NextApiResponseWithUser) => {
       userId: res.user?.id,
     },
   });
-  res.json({ user: res.user, playlistCount });
+  res.status(200).json({ user: res.user, playlistCount });
 };
 
 export default validateRoute(data);

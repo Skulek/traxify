@@ -49,12 +49,6 @@ const AuthForm = ({ mode }: AppProps) => {
     setPassword(event.target.value);
   };
 
-  useEffect(() => {
-    if (mode === "signin") router.prefetch("/");
-    else router.prefetch("signin");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const disabledSignIn = !email || !password;
   const disabledSignUp = disabledSignIn || !firstName || !lastName;
 

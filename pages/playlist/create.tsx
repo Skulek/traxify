@@ -43,7 +43,7 @@ const CreatePlaylistPage = ({
   const setActiveSong = useStoreActions((actions) => actions.changeActiveSong);
   const [playlistName, setPlaylistName] = useState("");
   const [playlistSongs, setPlaylistSongs] = useState<SongId[]>([]);
-
+  const [loading, setLoading] = useState(false);
   const updateFn = () => {
     return fetcher<Playlist>("playlist", {
       playlistName,
@@ -52,9 +52,11 @@ const CreatePlaylistPage = ({
     });
   };
   const handlePlaylistCreate = async () => {
+    setLoading(true);
     const options = { optimisticData: user, rollbackOnError: true };
 
     mutate("/playlist", updateFn, options);
+    setLoading(false);
   };
 
   const handlePlay = (activeSong?: Song) => {
@@ -119,6 +121,7 @@ const CreatePlaylistPage = ({
           boxShadow="md"
           disabled={playlistName === "" || playlistSongs.length === 0}
           rounded="md"
+          isLoading={loading}
           width={300}
           onClick={handlePlaylistCreate}
           _hover={{

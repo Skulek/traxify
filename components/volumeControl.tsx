@@ -1,11 +1,11 @@
-import { Box, Flex } from "@chakra-ui/layout";
+import { Flex } from "@chakra-ui/layout";
 import {
   RangeSlider,
   RangeSliderFilledTrack,
   RangeSliderThumb,
   RangeSliderTrack,
 } from "@chakra-ui/react";
-import { MdOutlineRingVolume, MdOutlineVolumeUp } from "react-icons/md";
+import { MdOutlineVolumeUp } from "react-icons/md";
 import { useStoreActions } from "../lib/hooks";
 
 interface volumeProps {

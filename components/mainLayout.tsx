@@ -1,9 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Box, Flex, Link, LinkOverlay, Text } from "@chakra-ui/layout";
+import { Box, Flex, Link, Text } from "@chakra-ui/layout";
 import {
   Button,
-  IconButton,
-  Image,
   Menu,
   MenuButton,
   MenuItem,
@@ -11,7 +9,7 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
-import { MdArrowDropDown, MdArrowLeft, MdArrowRight } from "react-icons/md";
+import { MdArrowDropDown } from "react-icons/md";
 import NextLink from "next/link";
 
 type LayoutType = "Profile" | "Playlist" | "CreatePlayList";
@@ -19,10 +17,7 @@ interface LinearGradientOptions {
   color: string;
   direction: "to-t" | "to-b";
 }
-interface ImageOptions {
-  src: string;
-  alt: string;
-}
+
 interface MainLayoutProps {
   type: LayoutType;
   image: React.ReactNode;

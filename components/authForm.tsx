@@ -10,7 +10,7 @@ import { Button, FormControl, Input } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { auth } from "../lib/mutations";
 
 type AppProps = {

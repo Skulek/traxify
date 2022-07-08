@@ -3,7 +3,7 @@ import { IconButton } from "@chakra-ui/react";
 import { Song } from "@prisma/client";
 import { MdAlbum, MdMusicNote, MdPeople, MdPlayArrow } from "react-icons/md";
 import { useStoreActions } from "../lib/hooks";
-import { SearchResults } from "../pages/api/search";
+import { SearchResults } from "../lib/types";
 
 const SearchResultsList = ({ albums, songs, artists }: SearchResults) => {
   const setActiveSongs = useStoreActions(
@@ -20,8 +20,13 @@ const SearchResultsList = ({ albums, songs, artists }: SearchResults) => {
   };
 
   if (isAnyData) return null;
-
-  return (
+  const allSearchData = {
+    songs,
+    albums,
+    artists,
+    total: [...songs, ...albums, ...artists],
+  };
+  return allSearchData.total.length ? (
     <Box paddingY="0.5rem" color="whiteAlpha.500">
       <Text size="h2" color="whiteAlpha.800" paddingBottom="20px">
         Search Results:
@@ -53,6 +58,10 @@ const SearchResultsList = ({ albums, songs, artists }: SearchResults) => {
         </Flex>
       ))}
     </Box>
+  ) : (
+    <Text size="h2" color="whiteAlpha.800" paddingBottom="20px">
+      No results :(
+    </Text>
   );
 };
 export default SearchResultsList;

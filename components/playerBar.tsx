@@ -1,4 +1,4 @@
-import { Box, Center, Flex, Square, Text } from "@chakra-ui/layout";
+import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useStoreState } from "../lib/hooks";
 import Player from "./player";
 import VolumeControl from "./volumeControl";

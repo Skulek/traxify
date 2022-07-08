@@ -1,10 +1,10 @@
-import { Playlist, Song, User } from "@prisma/client";
+import { Playlist, User } from "@prisma/client";
 import { createTypedHooks } from "easy-peasy";
 import useSwr from "swr";
-import { SearchResults } from "../pages/api/search";
 import { CustomError } from "./error";
 import fetcher from "./fetcher";
 import { TraxStore } from "./store";
+import { SearchResults } from "./types";
 
 export const useUser = () => {
   const { data, error } = useSwr<
@@ -33,6 +33,7 @@ export const useSearch = (searchTerm: string) => {
     searchTerm ? `/search?searchTerm=${searchTerm}` : null,
     fetcher
   );
+
   return {
     results: data,
     isLoading: !data && !error,

@@ -34,7 +34,7 @@ export default async (
       id: user.id,
       time: Date.now(),
     },
-    process.env.APP_SECRET!,
+    process.env.APP_SECRET,
     {
       expiresIn: "8h",
     }

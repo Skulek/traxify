@@ -1,4 +1,4 @@
-import { Box, Button, Center, Image, Input } from "@chakra-ui/react";
+import { Button, Center, Image, Input } from "@chakra-ui/react";
 import { Playlist, Song } from "@prisma/client";
 import InferNextPropsType from "infer-next-props-type";
 import { ChangeEvent, useState } from "react";
@@ -36,7 +36,7 @@ const CreatePlaylistPage = ({
   songs,
 }: InferNextPropsType<typeof getServerSideProps>) => {
   const { user, isLoading } = useUser();
-  const { mutate, cache } = useSWRConfig();
+  const { mutate } = useSWRConfig();
   const setActiveSongs = useStoreActions(
     (actions) => actions.changeActiveSongs
   );
@@ -54,7 +54,6 @@ const CreatePlaylistPage = ({
   const handlePlaylistCreate = async () => {
     setLoading(true);
     const options = { optimisticData: user, rollbackOnError: true };
-
     mutate("/playlist", updateFn, options);
     setLoading(false);
   };

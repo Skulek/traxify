@@ -1,24 +1,11 @@
 import { NextApiRequest } from "next";
-import { Album, Artist, Song } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { NextApiResponseWithUser, validateRoute } from "../../lib/auth";
-
-type Base = {
-  id: number;
-  name: string;
-};
-export type PickIdWithName<T extends Base> = Pick<T, "id" | "name">;
-
-export interface SearchResults {
-  songs?: Song[];
-  artists?: PickIdWithName<Artist>[];
-  albums?: PickIdWithName<Album>[];
-}
+import { SearchResults } from "../../lib/types";
 
 export default validateRoute(
   async (req: NextApiRequest, res: NextApiResponseWithUser<SearchResults>) => {
     const { searchTerm } = req.query;
-
     if (typeof searchTerm === "object") {
       return;
     }
